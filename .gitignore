@@ -1,3 +1,14 @@
+*.aux
+*.out
+*.log
+*.gz
+*.DS_Store
+*.synctex.gz
+*.ipynb_checkpoints/
+.~lock*
+.idea/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

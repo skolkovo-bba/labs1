@@ -7,15 +7,19 @@ class Value:
         return self.err
 
     @property
-    def relative_error(self):
+    def r_err(self):
         if abs(self.var) < 0.00000001:
             return 0.0
         else:
             return abs(self.err / self.var)
 
-    def __init__(self, var, err=0.0):
+    def __init__(self, var, err=0.0, r_err=None):
         self.var = float(var)
-        self.err = abs(err)
+        if r_err is None:
+            self.err = abs(err)
+        else:
+            self.err = abs(var * r_err)
+
 
     def __str__(self):
         return f"({'{:6f}'.format(self.var)}\u00B1{'{:6f}'.format(self.err)})"
@@ -43,7 +47,7 @@ class Value:
 
     def __add__(self, other):
         if isinstance(other, Value):
-            return Value(self.var + other.var, self.err + other.err)
+            return Value(self.var + other.var, (self.err ** 2 + other.err ** 2) ** 0.5)
         elif isinstance(other, int) or isinstance(other, float):
             return Value(self.var + other, self.err)
         else:
@@ -51,7 +55,7 @@ class Value:
 
     def __radd__(self, other):
         if isinstance(other, Value):
-            return Value(self.var + other.var, self.err + other.err)
+            return Value(self.var + other.var, (self.err ** 2 + other.err ** 2) ** 0.5)
         if isinstance(other, int) or isinstance(other, float):
             return Value(self.var + other, self.err)
         else:
@@ -63,7 +67,7 @@ class Value:
 
     def __sub__(self, other):
         if isinstance(other, Value):
-            return Value(self.var - other.var, self.err + other.err)
+            return Value(self.var - other.var, (self.err ** 2 + other.err ** 2) ** 0.5)
         elif isinstance(other, int) or isinstance(other, float):
             return Value(self.var - other, self.err)
         else:
@@ -71,7 +75,7 @@ class Value:
     
     def __rsub__(self, other):
         if isinstance(other, Value):
-            return other - self
+            return Value(self.var - other.var, (self.err ** 2 + other.err ** 2) ** 0.5)
         elif isinstance(other, int) or isinstance(other, float):
             return Value(other - self.var, self.err)
         else:
@@ -82,20 +86,18 @@ class Value:
     
 
     def __mul__(self, other):
-        with open("out.txt", "w+") as f:
-            f.write(f"mul {self}, {other}\n")
         if isinstance(other, Value):
-            return Value(self.var * other.var, (self.var * other.var) * ((self.relative_error ** 2 + other.relative_error ** 2) ** 0.5))
+            return Value(self.var * other.var, r_err=(self.r_err ** 2 + other.r_err ** 2) ** 0.5)
         elif isinstance(other, int) or isinstance(other, float):
-            return Value(self.var * other, self.err * other * self.relative_error)
+            return Value(self.var * other, r_err=self.r_err)
         else:
             raise TypeError
     
     def __rmul__(self, other):
-        with open("out.txt", "w+") as f:
-            f.write(f"what {self}, {other}\n")
-        if isinstance(other, int) or isinstance(other, float):
-            return Value(self.var * other, self.err * other * self.relative_error)
+        if isinstance(other, Value):
+            return Value(self.var * other.var, r_err=(self.r_err ** 2 + other.r_err ** 2) ** 0.5)
+        elif isinstance(other, int) or isinstance(other, float):
+            return Value(self.var * other, r_err=self.r_err)
         else:
             raise TypeError
     
@@ -105,15 +107,17 @@ class Value:
 
     def __truediv__(self, other):
         if isinstance(other, Value):
-            return Value(self.var / other.var, (self.var / other.var) * ((self.relative_error ** 2 + other.relative_error ** 2) ** 0.5))
+            return Value(self.var / other.var, r_err=(self.r_err ** 2 + other.r_err ** 2) ** 0.5)
         elif isinstance(other, int) or isinstance(other, float):
-            return Value(self.var / other, (self.var / other) * self.relative_error)
+            return Value(self.var / other, r_err=self.r_err)
         else:
             raise TypeError
     
     def __rtruediv__(self, other):
+        if isinstance(other, Value):
+            return Value(self.var / other.var, r_err=(self.r_err ** 2 + other.r_err ** 2) ** 0.5)
         if isinstance(other, int) or isinstance(other, float):
-            return Value(other / self.var, (other / self.var) * self.relative_error)
+            return Value(other / self.var, r_err=self.r_err)
         else:
             raise TypeError
 
