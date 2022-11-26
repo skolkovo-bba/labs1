@@ -1,3 +1,6 @@
+import numpy as np
+import pandas as pd
+
 class Value:
     var: float
     err: float
@@ -23,6 +26,9 @@ class Value:
 
     def __str__(self):
         return f"({'{:6f}'.format(self.var)}\u00B1{'{:6f}'.format(self.err)})"
+    
+    def __repr__(self):
+        return str(self)
     
     
     def __int__(self):
@@ -170,3 +176,8 @@ def get_var(x: Value):
         return float(x)
     else:
         raise TypeError
+
+def value_from_series(s):
+    if len(s) <= 1:
+        raise IndexError
+    return Value(np.mean(s), np.sqrt(np.sum((s - np.mean(s)) ** 2) / len(s) / (len(s) - 1)))
