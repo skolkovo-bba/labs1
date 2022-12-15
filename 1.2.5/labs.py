@@ -25,10 +25,13 @@ class Value:
 
 
     def __str__(self):
-        a = '{:6f}'.format(self.var)
+        r = 1
+        while round(self.err, r) == 0 and r < 30:
+            r += 1
+        a = '{:6f}'.format(round(self.var, r))
         while a[-1] == "0":
             a = a[:-1]
-        b = '{:6f}'.format(self.err)
+        b = '{:6f}'.format(round(self.err, r))
         while b[-1] == "0":
             b = b[:-1]
         return f"({a}\u00B1{b})"
