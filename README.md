@@ -1,4 +1,4 @@
-![alt-текст](https://github.com/arduinoev3/arduinoev3/blob/main/плакат.png?raw=true)
+![alt-текст](https://github.com/skolkovo-bba/labs/blob/main/шапка.png?raw=true)
 
 # Лабораторные работы
 Готовые лабы 
