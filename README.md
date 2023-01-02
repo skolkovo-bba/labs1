@@ -1,3 +1,5 @@
+![alt-текст](https://github.com/skolkovo-bba/labs/blob/main/шапка.png?raw=true)
+
 # Лабораторные работы
 Готовые лабы 
 
